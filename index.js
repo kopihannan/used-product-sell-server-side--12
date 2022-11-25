@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -26,6 +26,7 @@ run().catch(console.dir);
 
 const CategroiesCollection = client.db('categories').collection('services')
 const ProductsCollection = client.db('categories').collection('products')
+const UserCollection = client.db('categories').collection('users')
 
 app.get('/categories', async (req, res) => {
     try {
@@ -51,7 +52,60 @@ app.get('/categories/:category', async (req, res) => {
     }
 })
 
+app.post('/categories', async (req, res) => {
+    try {
+        const products = req.body;
+        const result = await ProductsCollection.insertOne(products).toArray()
+        res.send(result)
+    } catch (error) {
 
+    }
+})
+
+app.post('/user', async (req, res) => {
+    try {
+        const users = req.body;
+        const result = await UserCollection.insertOne(users)
+        res.send(result)
+    } catch (error) {
+
+    }
+})
+
+app.get('/user', async (req, res) => {
+    try {
+        const query = {};
+        const result = await UserCollection.find(query).toArray();
+        res.send(result);
+
+    } catch (error) {
+
+    }
+})
+
+app.get('/user/admin/:email', async (req, res) => {
+    try {
+        const email = req.params.email;
+        const query = { email }
+        const user = await UserCollection.findOne(query);
+        res.send({ isAdmin: user?.role === 'admin' });
+
+    } catch (error) {
+
+    }
+})
+
+app.delete('/user/:id', async (req, res)=>{
+    try {
+        const id = req.params.id;
+        const filter = {_id: ObjectId(id)}
+        const result = await UserCollection.deleteOne(filter);
+        res.send(result)
+
+    } catch (error) {
+        
+    }
+})
 
 app.get('/', (res, req) => {
     req.send(`${port} Quicker Server is runnig`)
