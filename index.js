@@ -28,7 +28,7 @@ const CategroiesCollection = client.db('categories').collection('services')
 const ProductsCollection = client.db('categories').collection('products')
 const UserCollection = client.db('categories').collection('users')
 
-app.get('/categories', async (req, res) => {
+app.get('/categorie', async (req, res) => {
     try {
         const query = {};
         const result = await CategroiesCollection.find(query).toArray();
@@ -39,7 +39,7 @@ app.get('/categories', async (req, res) => {
     }
 })
 
-app.get('/categories/:category', async (req, res) => {
+app.get('/categorie/:category', async (req, res) => {
     try {
         const category = req.params.category;
         const query = { category };
@@ -52,7 +52,20 @@ app.get('/categories/:category', async (req, res) => {
     }
 })
 
-app.post('/categories', async (req, res) => {
+app.get('/categorie/category/:email', async (req, res) => {
+    try {
+        const email = req.params.email;
+        const query = { email };
+        const products = await ProductsCollection.find(query).toArray();
+        res.send(products)
+    } catch (error) {
+
+    }
+})
+
+
+
+app.post('/categorie', async (req, res) => {
     try {
         const products = req.body;
         const result = await ProductsCollection.insertOne(products).toArray()
@@ -95,15 +108,58 @@ app.get('/user/admin/:email', async (req, res) => {
     }
 })
 
-app.delete('/user/:id', async (req, res)=>{
+app.get('/user/:email', async (req, res) => {
+    try {
+        const email = req.params.email;
+        const query = { email }
+        const user = await UserCollection.findOne(query);
+        res.send({ isType: user?.select === 'seller' });
+
+    } catch (error) {
+
+    }
+})
+
+
+app.put('/user/admin/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const filter = {_id: ObjectId(id)}
+        const query = { _id: ObjectId(id) }
+        const option = { upsert: true };
+        const updatedDoc = {
+            $set: {
+                isVerified: 'verified'
+            }
+        }
+        const result = await UserCollection.updateOne(query, updatedDoc, option);
+        res.send(result);
+    } catch (error) {
+
+    }
+})
+
+
+app.delete('/user/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) }
         const result = await UserCollection.deleteOne(filter);
         res.send(result)
 
     } catch (error) {
-        
+
+    }
+})
+
+app.delete('/categorie/category/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) }
+        const result = await ProductsCollection.deleteOne(filter);
+        res.send(result)
+
+    } catch (error) {
+
     }
 })
 
