@@ -27,6 +27,7 @@ run().catch(console.dir);
 const CategroiesCollection = client.db('categories').collection('services')
 const ProductsCollection = client.db('categories').collection('products')
 const UserCollection = client.db('categories').collection('users')
+const BookingCollection = client.db('categories').collection('Booked')
 
 app.get('/categorie', async (req, res) => {
     try {
@@ -75,6 +76,30 @@ app.post('/categorie', async (req, res) => {
     }
 })
 
+app.post('/booking', async (req, res) => {
+    try {
+        const booked = req.body;
+        const result = await BookingCollection.insertOne(booked).toArray()
+        res.send(result)
+    } catch (error) {
+
+    }
+})
+
+
+app.get('/booking/:email', async (req, res) => {
+    try {
+        const email = req.params.email;
+        const query = { email };
+        const products = await BookingCollection.find(query).toArray();
+        res.send(products)
+    } catch (error) {
+
+    }
+})
+
+
+
 app.post('/user', async (req, res) => {
     try {
         const users = req.body;
@@ -113,12 +138,24 @@ app.get('/user/:email', async (req, res) => {
         const email = req.params.email;
         const query = { email }
         const user = await UserCollection.findOne(query);
-        res.send({ isType: user?.select === 'seller' });
+        res.send({ isType: user?.select === 'seller', isVerify: user?.isVerified === 'verified' });
 
     } catch (error) {
 
     }
 })
+
+// app.get('/user/:email', async (req, res) => {
+//     try {
+//         const email = req.params.email;
+//         const query = { email }
+//         const user = await UserCollection.findOne(query);
+//         res.send({});
+
+//     } catch (error) {
+
+//     }
+// })
 
 
 app.put('/user/admin/:id', async (req, res) => {
