@@ -28,6 +28,7 @@ const CategroiesCollection = client.db('categories').collection('services')
 const ProductsCollection = client.db('categories').collection('products')
 const UserCollection = client.db('categories').collection('users')
 const BookingCollection = client.db('categories').collection('Booked')
+const AdvertiseCollection = client.db('categories').collection('advertise')
 
 app.get('/categorie', async (req, res) => {
     try {
@@ -52,6 +53,33 @@ app.get('/categorie/:category', async (req, res) => {
 
     }
 })
+
+app.put('/ads', async(req, res)=>{
+    try {
+        const query = req.body;
+        const option = { upsert: true };
+        const updatedDoc = {
+            $set: {
+                isAdvirtise : true
+            }
+        }
+        const result = await AdvertiseCollection.updateOne(query, updatedDoc, option);
+        res.send(result);
+    } catch (error) {
+
+    }
+})
+
+app.get('/ads', async (req, res)=>{
+    try {
+        const query = req.body;
+        const result = await AdvertiseCollection.find(query).toArray()
+        res.send(result)
+    } catch (error) {
+        
+    }
+})
+
 
 app.get('/categorie/category/:email', async (req, res) => {
     try {
@@ -145,17 +173,6 @@ app.get('/user/:email', async (req, res) => {
     }
 })
 
-// app.get('/user/:email', async (req, res) => {
-//     try {
-//         const email = req.params.email;
-//         const query = { email }
-//         const user = await UserCollection.findOne(query);
-//         res.send({});
-
-//     } catch (error) {
-
-//     }
-// })
 
 
 app.put('/user/admin/:id', async (req, res) => {
