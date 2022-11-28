@@ -54,13 +54,13 @@ app.get('/categorie/:category', async (req, res) => {
     }
 })
 
-app.put('/ads', async(req, res)=>{
+app.put('/ads', async (req, res) => {
     try {
         const query = req.body;
         const option = { upsert: true };
         const updatedDoc = {
             $set: {
-                isAdvirtise : true
+                isAdvirtise: true
             }
         }
         const result = await AdvertiseCollection.updateOne(query, updatedDoc, option);
@@ -70,13 +70,13 @@ app.put('/ads', async(req, res)=>{
     }
 })
 
-app.get('/ads', async (req, res)=>{
+app.get('/ads', async (req, res) => {
     try {
         const query = req.body;
         const result = await AdvertiseCollection.find(query).toArray()
         res.send(result)
     } catch (error) {
-        
+
     }
 })
 
@@ -106,24 +106,43 @@ app.post('/categorie', async (req, res) => {
 
 app.post('/booking', async (req, res) => {
     try {
-        const booked = req.body;
-        const result = await BookingCollection.insertOne(booked).toArray()
-        res.send(result)
+        const booking = req.body;
+        const query = {
+            email: booking.email,
+            price: booking.price,
+            image: booking.image,
+            userName: booking.userName,
+            productName: booking.productName,
+            phoneNumber: booking.phoneNumber,
+            locationCustomer: booking.locationCustomer
+        }
+
+        const booked = await BookingCollection.find(query).toArray();
+
+        if (booked.length) {
+            const message = `You already have a booking on ${booking.email}`
+            return res.send({ acknowledged: false, message })
+        }
+
+        const result = await BookingCollection.insertOne(booking);
+        res.send(result);
     } catch (error) {
 
     }
-})
+});
 
+app.get('/booking', async (req, res) => {
+    const email = req.query.email;
+    const query = { email: email };
+    const bookings = await BookingCollection.find(query).toArray();
+    res.send(bookings);
+});
 
-app.get('/booking/:email', async (req, res) => {
-    try {
-        const email = req.params.email;
-        const query = { email };
-        const products = await BookingCollection.find(query).toArray();
-        res.send(products)
-    } catch (error) {
-
-    }
+app.get('/booking/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const booking = await BookingCollection.findOne(query);
+    res.send(booking);
 })
 
 
