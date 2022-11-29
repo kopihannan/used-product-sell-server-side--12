@@ -51,6 +51,7 @@ app.get('/categorie/:category', async (req, res) => {
         res.send(products)
 
 
+
     } catch (error) {
 
     }
@@ -76,7 +77,14 @@ app.get('/ads', async (req, res) => {
     try {
         const query = req.body;
         const result = await AdvertiseCollection.find(query).toArray()
+
+        const filter = {advetise: true}
+            const advertise = await ProductsCollection.find(filter).toArray();
+            console.log(advertise);
+
         res.send(result)
+
+        
     } catch (error) {
 
     }
@@ -175,6 +183,7 @@ app.post('/payments', async (req, res) => {
             transactionId: payment.transactionId
         }
     }
+ 
     const updatedResult = await BookingCollection.updateOne(filter, updatedDoc)
     res.send(result);
 })
@@ -197,6 +206,18 @@ app.get('/user', async (req, res) => {
 
     } catch (error) {
 
+    }
+})
+
+app.get('/user/:select', async(req, res)=>{
+    try {
+        const select = req.params.select;
+        const query = {select: select}
+        const result = await UserCollection.find(query).toArray()
+        res.send(result)
+
+    } catch (error) {
+        
     }
 })
 
