@@ -190,6 +190,8 @@ app.post('/payments', async (req, res) => {
     res.send(result);
 })
 
+
+
 app.post('/user', async (req, res) => {
     try {
         const users = req.body;
@@ -261,7 +263,7 @@ app.put('/user/admin/:email', async (req, res) => {
         
         const verify = await ProductsCollection.updateOne(query, updatedDoc, option)
         const result = await UserCollection.updateOne(query, updatedDoc, option);
-        res.send(result);
+        res.send(verify);
         
     } catch (error) {
 
