@@ -49,9 +49,6 @@ app.get('/categorie/:category', async (req, res) => {
         const query = { category };
         const products = await ProductsCollection.find(query).toArray();
         res.send(products)
-
-
-
     } catch (error) {
 
     }
@@ -77,11 +74,7 @@ app.get('/ads', async (req, res) => {
     try {
         const query = req.body;
         const result = await AdvertiseCollection.find(query).toArray()
-        
-
         res.send(result)
-
-        
     } catch (error) {
 
     }
@@ -185,7 +178,7 @@ app.post('/payments', async (req, res) => {
             transactionId: payment.transactionId
         }
     }
- 
+
     const updatedResult = await BookingCollection.updateOne(filter, updatedDoc)
     res.send(result);
 })
@@ -213,14 +206,14 @@ app.get('/user', async (req, res) => {
     }
 })
 
-app.get('/users/:select', async(req, res)=>{
+app.get('/users/:select', async (req, res) => {
     try {
         const select = req.params.select;
-        const query = {select: select}
+        const query = { select: select }
         const result = await UserCollection.find(query).toArray()
         res.send(result)
     } catch (error) {
-        
+
     }
 })
 
@@ -260,11 +253,11 @@ app.put('/user/admin/:email', async (req, res) => {
                 isVerified: true
             }
         }
-        
+
         const verify = await ProductsCollection.updateOne(query, updatedDoc, option)
         const result = await UserCollection.updateOne(query, updatedDoc, option);
         res.send(verify);
-        
+
     } catch (error) {
 
     }
