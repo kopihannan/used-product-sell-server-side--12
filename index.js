@@ -77,10 +77,7 @@ app.get('/ads', async (req, res) => {
     try {
         const query = req.body;
         const result = await AdvertiseCollection.find(query).toArray()
-
-        const filter = {advetise: true}
-            const advertise = await ProductsCollection.find(filter).toArray();
-            console.log(advertise);
+        
 
         res.send(result)
 
@@ -95,6 +92,11 @@ app.get('/categorie/category/:email', async (req, res) => {
     try {
         const email = req.params.email;
         const query = { email };
+
+        const filter = req.params.bookingId;
+        const reslt = await PaymentCollection.find(filter).toArray();
+        console.log("this is transtion", reslt);
+
         const products = await ProductsCollection.find(query).toArray();
         res.send(products)
     } catch (error) {
@@ -209,13 +211,12 @@ app.get('/user', async (req, res) => {
     }
 })
 
-app.get('/user/:select', async(req, res)=>{
+app.get('/users/:select', async(req, res)=>{
     try {
         const select = req.params.select;
         const query = {select: select}
         const result = await UserCollection.find(query).toArray()
         res.send(result)
-
     } catch (error) {
         
     }
@@ -247,18 +248,21 @@ app.get('/user/:email', async (req, res) => {
 
 
 
-app.put('/user/admin/:id', async (req, res) => {
+app.put('/user/admin/:email', async (req, res) => {
     try {
-        const id = req.params.id;
-        const query = { _id: ObjectId(id) }
+        const email = req.params.email;
+        const query = { email: email }
         const option = { upsert: true };
         const updatedDoc = {
             $set: {
-                isVerified: 'verified'
+                isVerified: true
             }
         }
+        
+        const verify = await ProductsCollection.updateOne(query, updatedDoc, option)
         const result = await UserCollection.updateOne(query, updatedDoc, option);
         res.send(result);
+        
     } catch (error) {
 
     }
